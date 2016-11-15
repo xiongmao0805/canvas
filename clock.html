@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<style>
+	body{margin: 0;padding: 0;}
+	canvas{display: block;margin: 50px auto 0;}
+</style>
+</head>
+<body>
+
+<script type="text/javascript">
+	var date = new Date();
+	var time = date.toLocaleTimeString();
+	var h = time.split(':')[0];
+	var p = h.replace(/[\d]/g,'');
+	if(p == '上午'){
+		p = 'am';
+	}else{
+		p = 'pm';
+	}
+	h = parseInt(h.replace(/[^\d]/g,''));
+	var m = parseInt(time.split(':')[1]);
+	var s = parseInt(time.split(':')[2]);
+
+	var canvas = document.createElement('canvas');
+	ctx = canvas.getContext('2d');
+	canvas.width = 400;
+	canvas.height = 400;
+	document.body.appendChild(canvas);
+
+	function drawOut(x,y,r){           //绘制边框
+		ctx.lineWidth = 5;
+		ctx.strokeStyle = '#6af'
+		ctx.save();
+		ctx.beginPath();
+		ctx.arc(x,y,r,0,2*Math.PI);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.restore();
+	}
+
+	function Mark1(x,y,r,l,i){         //绘制时刻度
+		ctx.lineWidth = 5;
+		ctx.strokeStyle = '#356';
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(30*i*Math.PI/180);
+		ctx.beginPath();
+		ctx.moveTo( r - l -6, 0);
+		ctx.lineTo( r - 6, 0);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.restore();
+	}
+	function Mark2(x,y,r,l,i){         //绘制分刻度
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = '#356';
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(6*i*Math.PI/180);
+		ctx.beginPath();
+		ctx.moveTo( r - l -6, 0);
+		ctx.lineTo( r - 6, 0);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.restore();
+	}
+	function drawMark(){
+		for(var i=0;i<12;i++){
+			Mark1(200,200,150,15,i);
+		}
+		for(var i=0;i<60;i++){
+			Mark2(200,200,150,10,i);
+		}
+	}
+
+	function drawState(x,y,r){
+		ctx.font = '25px Arial';
+		ctx.fillStyle = '#d53';
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillText(p,x-15,y-r/2+15);
+		ctx.closePath();
+		ctx.restore();
+	}
+
+	function hour(x,y,l,a){                  //绘制时针
+		ctx.lineWidth = 5;
+		ctx.strokeStyle = '#568';
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(a*Math.PI/180);
+		ctx.beginPath();
+		ctx.moveTo( -6, 0);
+		ctx.lineTo( l, 0);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.restore();
+	}
+	function minute(x,y,l,a){               //绘制分针
+		ctx.lineWidth = 5;
+		ctx.strokeStyle = '#568';
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(a*Math.PI/180);
+		ctx.beginPath();
+		ctx.moveTo( -7, 0);
+		ctx.lineTo( l, 0);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.restore();
+	}
+	function sec(x,y,l,a){                  //绘制秒针
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = '#d78';
+		ctx.save();
+		ctx.translate(x, y);
+		ctx.rotate(a*Math.PI/180);
+		ctx.beginPath();
+		ctx.moveTo( -10, 0);
+		ctx.lineTo( l, 0);
+		ctx.stroke();
+		ctx.closePath();
+		ctx.restore();
+	}
+
+	function dot(x,y,r){                    //绘制时针定点
+		ctx.fillStyle = '#d53'
+		ctx.save();
+		ctx.beginPath();
+		ctx.arc(x,y,r,0,2*Math.PI);
+		ctx.fill();
+		ctx.closePath();
+		ctx.restore();
+	}
+
+	function clock(h,m,s){
+		ctx.clearRect(0,0,400,400);
+		drawOut(200,200,150);
+		drawMark();
+		drawState(200,200,150);
+		hour(200,200,75,30*h-90 + 30*(m/60));
+		minute(200,200,90,6*m-90 + 6*(s/60));
+		sec(200,200,110,6*s-90);
+		dot(200,200,4);
+		setTimeout(function(){
+			if(s>=59){
+				s = 0;
+				if(m>=59){
+					m = 0;
+					if(h>=11){
+						h = 0;
+						clock(h,m,s);
+					}else{
+						clock(h+1,m,s);
+					}
+				}else{
+					clock(h,m+1,s);
+				}
+			}else{
+				clock(h,m,s+1);
+			}
+		},1000);
+	}
+	clock(h,m,s);
+
+</script>
+</body>
+</html>

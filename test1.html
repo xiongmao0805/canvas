@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title></title>
+</head>
+<body>
+	<script type="text/javascript">
+		var canvas = document.createElement("canvas"),
+			ctx = canvas.getContext("2d");
+		canvas.width = 1200;
+		canvas.height = 600;
+		ctx.strokeStyle = "#fba048";
+		ctx.lineWidth = 2;
+		document.body.appendChild(canvas);
+		// function drawC(r){
+		// 	ctx.save();
+		// 	ctx.beginPath();
+		// 	ctx.arc(600,300,r,0,Math.PI * 2);
+		// 	ctx.stroke();
+		// 	ctx.closePath();
+		// 	ctx.restore();
+		// }
+		function drawC(r,sr,range) {
+			ctx.save();
+			ctx.beginPath();
+			ctx.arc(600,300,r,sr,range);
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+		}
+		function drawRect(r){
+			var l = 20;
+			ctx.save();
+			ctx.beginPath();
+			ctx.moveTo(600 + l * Math.cos(0),300 + l * Math.sin(0));
+			if(r > 90){
+				ctx.lineTo(600 + l * Math.cos(Math.PI / 2),300 + l * Math.sin(Math.PI / 2));
+			}
+			if(r > 180){
+				ctx.lineTo(600 + l * Math.cos(Math.PI),300 + l * Math.sin(Math.PI));
+			}
+			if(r > 270){
+				ctx.lineTo(600 + l * Math.cos(Math.PI * 3 / 2),300 + l * Math.sin(Math.PI * 3 / 2));
+			}
+			if(r >= 360){
+				ctx.lineTo(600 + l * Math.cos(0),300 + l * Math.sin(0));
+			}else{
+				if(r % 90 > 45){
+					ctx.lineTo(600 + l / Math.sqrt(2) / Math.cos(Math.PI / 180 * (r % 45)) * Math.cos(Math.PI * r / 180),300 + l / Math.sqrt(2) / Math.cos(Math.PI / 180 * (r % 45)) * Math.sin(Math.PI * r / 180));
+				}else if(r % 90 < 45){
+					ctx.lineTo(600 + l / Math.sqrt(2) / Math.cos(Math.PI / 180 * (45 - r % 45)) * Math.cos(Math.PI * r / 180),300 + l / Math.sqrt(2) / Math.cos(Math.PI / 180 * (45 - r % 45)) * Math.sin(Math.PI * r / 180));
+				}else{
+					ctx.lineTo(600 + l / Math.sqrt(2) * Math.cos(Math.PI * r / 180),300 + l / Math.sqrt(2) * Math.sin(Math.PI * r / 180));
+				}
+			}
+			ctx.stroke();
+			ctx.closePath();
+			ctx.restore();
+		}
+		var i = 0,
+			j = 0,
+			l = 0,
+			r = 0;
+		function draw(){
+			ctx.clearRect(400,100,400,400);
+			// drawC(r);
+			// drawRect(l);
+			// if(r <= 100){
+			// 	r += 1;
+			// 	l += 0.5;
+			// }else{
+			// 	r = 0;
+			// 	l = 0;
+			// }
+			if(i <= 360){
+				drawC(20,Math.PI / 2,Math.PI * i / 180 + Math.PI / 2);
+				i += 6;
+			}else{
+				drawRect(r);
+				drawC(60,-Math.PI / 2,Math.PI * r / 180 - Math.PI / 2);
+				if(r < 360){
+					r += 5;
+				}else{
+					i = 0;
+					j = 0;
+					l = 0;
+					r = 0;
+				}
+			}
+			if(j <= 360){
+				j += 12;
+			}
+			drawC(100,-Math.PI / 2,Math.PI * j / 180 - Math.PI / 2);
+			requestAnimationFrame(draw);
+		}
+		draw();
+	</script>
+</body>
+</html>

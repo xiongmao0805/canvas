@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{margin: 0;padding: 0;}
+		div{position: relative;width: 100px;height: 100px;overflow: hidden;}
+		p{position: absolute;width: 100%;height: 100%;border: 100px dotted #f00;}
+	</style>
+</head>
+<body>
+	<div><p></p></div>
+<script type="text/javascript">
+	var canvas = document.createElement('canvas');
+	ctx = canvas.getContext('2d');
+	canvas.width = 1000;
+	canvas.height = 500;
+	ctx.strokeStyle = 'blue';
+	document.body.appendChild(canvas);
+	
+	function drawCircle(r,sAngle,eAngle){
+		ctx.save();
+		ctx.beginPath();
+		ctx.arc(500,250,r,sAngle,eAngle);
+		ctx.stroke();
+		ctx.restore();
+	}
+	var angle = 0;
+	var r = 50;
+	function draw(){
+		if(angle<=360){
+			ctx.clearRect(300,50,400,400);
+			drawCircle(r,Math.PI*0.5,Math.PI*angle/180+Math.PI*0.5);
+			angle += 6;
+			setTimeout(function(){
+				draw();
+			},25);
+		}else{
+			if(r<200){
+				ctx.clearRect(300,50,400,400);
+				r += 20;
+				drawCircle(r,Math.PI*0.5,Math.PI*angle/180+Math.PI*0.5);
+				setTimeout(function(){
+					draw();
+				},25);
+			}
+		}
+	}
+	draw();
+</script>
+</body>
+</html>

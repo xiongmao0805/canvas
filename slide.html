@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<style>
+*{margin: 0;padding: 0;}
+body{background: #abc;animation: bg 1s linear;-moz-animation: bg 1s linear;-webkit-animation: bg 1s linear;}
+canvas{display: block;margin: 0 auto;}
+@keyframes bg{
+	0%   {background: #f99;}
+	25%  {background: #d99;}
+	50%  {background: #9d6;}
+	75%  {background: #dda;}
+	100% {background: #abc;}
+}
+@-moz-keyframes bg{
+	0%   {background: #f99;}
+	25%  {background: #d99;}
+	50%  {background: #9d6;}
+	75%  {background: #dda;}
+	100% {background: #abc;}
+}
+@-webkit-keyframes bg{
+	0%   {background: #f99;}
+	25%  {background: #d99;}
+	50%  {background: #9d6;}
+	75%  {background: #dda;}
+	100% {background: #abc;}
+}
+</style>
+</head>
+<body>
+<script type="text/javascript">
+	window.requestAnimationFrame = (function(callback) {
+		return  window.requestAnimationFrame ||
+				window.webkitRequestAnimationFrame ||
+				window.mozRequestAnimationFrame ||
+				window.oRequestAnimationFrame ||
+				window.msRequestAnimationFrame ||
+				function(callback) {
+					window.setTimeout(callback, 1000 / 60);
+				};
+	})();
+	var canvas = document.createElement('canvas');
+	ctx = canvas.getContext('2d');
+	canvas.width = 320;
+	canvas.height = 320;
+	ctx.fillStyle = 'white';
+	document.body.appendChild(canvas);
+
+	function position(x,y,r,angle){                     //x为圆心水平坐标，y为圆心垂直坐标，i为弧度，r为半径
+		var p = [];
+		p[0] = x + Math.cos(Math.PI * angle) * r;
+		p[1] = y + Math.sin(Math.PI * angle) * r;
+		return p;
+	}
+
+	function circle1(x,y,r){
+		ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+		ctx.lineWidth = 4;
+		ctx.save();
+		ctx.beginPath();
+		ctx.arc( x, y, 60, Math.PI*0.9, Math.PI*1.2 + Math.PI*0.9 );
+		//ctx.lineTo( x, y);             //可用于画扇形
+		//ctx.closePath();
+		ctx.stroke();
+		ctx.restore();
+	}
+	function circle2(x,y,r){
+		ctx.strokeStyle = 'white';
+		ctx.lineWidth = 1;
+		ctx.save();
+		ctx.beginPath();
+		ctx.arc( x, y, 70, Math.PI*0.9, Math.PI*1.2 + Math.PI*0.9 );
+		ctx.stroke();
+		ctx.restore();
+	}
+	var dials = [0,0.2,0.4,0.6,0.8,1];
+	function lines(l,r,cent){
+		ctx.save();
+		ctx.beginPath();
+		ctx.moveTo(position(160,160,r-l,cent*1.2+0.9)[0],position(160,160,r-l,cent*1.2+0.9)[1]);
+		ctx.lineTo(position(160,160,r,cent*1.2+0.9)[0],position(160,160,r,cent*1.2+0.9)[1]);
+		ctx.stroke();
+		ctx.restore();
+	}
+	function drawDials(){
+		for(var i=0;i<dials.length;i++){
+			lines(5,60,dials[i]);
+		}
+	}
+	function dot(x,y,r0,r1,i){
+		ctx.save();
+		ctx.beginPath();
+		ctx.arc( position(x,y,r0,i)[0], position(x,y,r0,i)[1], r1, 0, Math.PI*2 );
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
+	}
+	function value(x,y,r,str,a){
+		ctx.font = '6px Arial';
+		ctx.save();
+		ctx.translate(x,y);
+		ctx.rotate((a+0.5)*Math.PI);
+		ctx.scale(0.7,0.7)
+		ctx.beginPath();
+		ctx.fillText(str, -10, -r);
+		ctx.closePath();
+		ctx.restore();
+	}
+	function drawValue(){
+		var arr = [350,470,590,710,830,950];
+		var angle = [0,0.2,0.4,0.6,0.8,1];
+		for(var i=0;i<arr.length;i++){
+			value(160,160,65,arr[i],(90+angle[i]*120)/100);
+		}
+	}
+	function text(x,y,str){
+		ctx.font = '30px Arial';
+		ctx.save();
+		ctx.beginPath();
+		ctx.fillText(str,x - 24,y + 5);
+		ctx.closePath();
+		ctx.restore();
+	}
+
+	var r = 60;                             //刻度弧半径
+	var j = 0;                              //文字
+	var k = 90;                             //为避免小数计算误差，以弧度*100来计算，初始值90
+	var cent = 0.56;                         //当前刻度所点总值的比例
+	var start = 350;
+	var end = 950;
+	var rate = (end - start)/100;           //文字相加比率
+	function slide(){
+		if(k <= (90 + cent*120)){           //一个圓为2个弧度，所画部分的弧度为1.2,cent*120为所对应增加的弧度
+			ctx.clearRect(0,0,320,320);
+			circle1(160,160,r);
+			circle2(160,160,r+60);
+			drawDials();
+			drawValue();
+			text(160,160,350+rate*j);
+			dot(160,160,70,3,k/100);
+			k += 1.2;
+			j++;
+			requestAnimationFrame(slide);
+		}
+	}
+
+	slide();
+	
+</script>
+</body>
+</html>
