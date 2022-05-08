@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Document</title>
+<script type="text/javascript" src="jquery.js"></script>
+<style>
+body{margin: 0;padding: 0;background: #fafafa;}
+svg{overflow: hidden;display: block;margin: 50px auto 0;}
+</style>
+</head>
+<body>
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" version="1.1">
+	<defs>
+		<clipPath id="clipPath">
+			<circle cx="250" cy="250" r="80"></circle>
+		</clipPath>
+	</defs>
+	<g>
+		<circle cx="250" cy="250" r="80" fill="#d7d7d7"></circle>
+		<circle cx="258" cy="258" r="80" fill="#f9f9f9" clip-path="url(#clipPath)"></circle>
+		<circle cx="250" cy="250" r="80" fill="none" stroke="#999" stroke-width="5"></circle>
+	</g>
+	<g id="dials">
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+		<rect x="316" y="249" width="8" height="3" fill="#aaa"></rect>
+	</g>
+	<g>
+		<rect x="244" y="249" width="48" height="3" fill="#666" id="hour" transform="rotate(30,250,250)"></rect>
+		<rect x="242" y="249" width="58" height="3" fill="#666" id="minute" transform="rotate(60,250,250)"></rect>
+		<rect x="240" y="249" width="70" height="2" fill="#d78" id="sec" transform="rotate(90,250,250)"></rect>
+		<circle cx="250" cy="250" r="3.5" fill="#d53"></circle>
+	</g>
+</svg>
+</body>
+</html>
+<script type="text/javascript">
+$(function(){
+	var date = new Date();
+	var time = date.toLocaleTimeString();
+	var h = time.split(':')[0];
+	var p = h.replace(/[\d]/g,'');
+	if(p == '上午'){
+		p = 'am';
+	}else{
+		p = 'pm';
+	}
+	h = parseInt(h.replace(/[^\d]/g,''));
+	var m = parseInt(time.split(':')[1]);
+	var s = parseInt(time.split(':')[2]);
+
+	for(var i=0;i<12;i++){
+		$('#dials').children().eq(i).attr('transform', 'rotate('+30*i+',250,250)');
+	}
+
+	function run(hour, minute, sec){
+		$('#hour').attr('transform', 'rotate(' + ( 30 * ( hour + minute/60 ) - 90 ) +',250,250)');
+		$('#minute').attr('transform', 'rotate(' + ( 6 * ( minute + sec/60 ) - 90 ) +',250,250)');
+		$('#sec').attr('transform', 'rotate(' + ( 6 * sec - 90 ) +',250,250)');
+		setTimeout(function () {
+			if(sec>=59){
+				sec = 0;
+				if(minute>=59){
+					minute = 0;
+					if(hour>=11){
+						hour = 0;
+						run(hour,minute,sec);
+					}else{
+						run(hour+1,minute,sec);
+					}
+				}else{
+					run(hour,minute+1,sec);
+				}
+			}else{
+				run(hour,minute,sec+1);
+			}
+		},1000);
+	}
+	run(h,m,s);
+});
+</script>
